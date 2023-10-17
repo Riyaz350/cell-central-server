@@ -32,12 +32,24 @@ const dbConnect = async () => {
 }
 dbConnect();
 
-// const coffeeCollection = client.db("coffeeDB").collection("coffee");
-// const userCollection = client.db("coffeeDB").collection("user");
+const brandCollection = client.db("brandDB").collection("phones");
 
 
 app.get('/', async(req, res)=>{
 	res.send('Server is running')
+})
+
+app.get('/phones', async(req, res)=>{
+  const cursor = brandCollection.find();
+  const result = await cursor.toArray()
+  res.send(result)
+
+})
+
+app.post('/phones', async(req, res)=>{
+  const phone = req.body
+  const result = await brandCollection.insertOne(phone)
+  res.send(result )
 })
 
 app.listen(port, ()=>{
