@@ -64,12 +64,7 @@ app.get('/phones/:id', async(req, res)=>{
 })
 
 
-app.get('/cart/:id', async(req, res)=>{
-  const id = req.params.id
-  const phone = {_id : new ObjectId(id)}
-  const result = await cartCollection.findOne(phone)
-  res.send(result)
-})
+
 
 
 app.post('/phones', async(req, res)=>{
@@ -107,11 +102,17 @@ app.put('/phones/:id', async(req, res)=>{
     })
 
 
-
+app.get('/cart/:id', async(req, res)=>{
+  const id = req.params.id
+  const phone = {_id : id}
+  const result = await cartCollection.findOne(phone)
+  res.send(result)
+})
 
 app.delete('/cart/:id', async(req, res)=>{
   const id = req.params.id;
-  const phone = {_id : new ObjectId(id)}
+  console.log(id)
+  const phone = {_id : id}
   const result = await cartCollection.deleteOne(phone);
   res.send(result)
 })
