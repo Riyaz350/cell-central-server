@@ -33,12 +33,12 @@ const dbConnect = async () => {
 dbConnect();
 
 const brandCollection = client.db("brandDB").collection("phones");
+const cartCollection = client.db("brandDB").collection("myCart");
 
 
 app.get('/', async(req, res)=>{
 	res.send('Server is running')
 })
-
 
 
 app.get('/phones', async(req, res)=>{
@@ -48,6 +48,14 @@ app.get('/phones', async(req, res)=>{
 
 })
 
+app.get('/cart', async(req, res)=>{
+  const cursor = cartCollection.find();
+  const result = await cursor.toArray()
+  res.send(result)
+
+})
+
+
 app.get('/phones/:id', async(req, res)=>{
   const id = req.params.id
   const phone = {_id : new ObjectId(id)}
@@ -56,21 +64,24 @@ app.get('/phones/:id', async(req, res)=>{
 })
 
 
-// app.get('/phones/:brandi', async(req, res)=>{
-//   const brandi = req.params.brandi
-//   console.log(brandi)
-//   const result = brandCollection.find({brand: brandi})
-//   // const final = result.toArray()
-//   res.send(result)
-// })
-
-
-
+app.get('/cart/:id', async(req, res)=>{
+  const id = req.params.id
+  const phone = {_id : new ObjectId(id)}
+  const result = await cartCollection.findOne(phone)
+  res.send(result)
+})
 
 
 app.post('/phones', async(req, res)=>{
   const phone = req.body
   const result = await brandCollection.insertOne(phone)
+  res.send(result )
+})
+
+
+app.post('/cart', async(req, res)=>{
+  const phone = req.body
+  const result = await cartCollection.insertOne(phone)
   res.send(result )
 })
 
@@ -82,12 +93,12 @@ app.put('/phones/:id', async(req, res)=>{
   const phone = {
     $set:{
       name: updatedPhone.name,
-      quantity: updatedPhone.quantity,
-      category: updatedPhone.category,
-      details: updatedPhone.details,
-      supplier: updatedPhone.supplier,
-      chef: updatedPhone.chef,
-      photo: updatedPhone.photo
+      brand: updatedPhone.brand,
+      photo: updatedPhone.photo,
+      type: updatedPhone.type,
+      price: updatedPhone.price,
+      rating: updatedPhone.rating,
+      description: updatedPhone.description   
     }
   }
   const result = await brandCollection.updateOne(query, phone, options)
@@ -95,10 +106,13 @@ app.put('/phones/:id', async(req, res)=>{
 
     })
 
-app.delete('/phones/:id', async(req, res)=>{
+
+
+
+app.delete('/cart/:id', async(req, res)=>{
   const id = req.params.id;
   const phone = {_id : new ObjectId(id)}
-  const result = await brandCollection.deleteOne(phone);
+  const result = await cartCollection.deleteOne(phone);
   res.send(result)
 })
 
