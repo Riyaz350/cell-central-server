@@ -41,12 +41,38 @@ app.get('/', async(req, res)=>{
 })
 
 
-app.get('/phones', async(req, res)=>{
-  const cursor = brandCollection.find();
+
+
+app.get('/phones/:brandName', async(req, res)=>{
+  const brandName = req.params.brandName
+  const cursor = brandCollection.find({brand : brandName});
   const result = await cursor.toArray()
   res.send(result)
 
 })
+
+app.get('/product/:id', async(req, res)=>{
+  const id = req.params.id
+  const phone = {_id : new ObjectId(id)}
+  const result = await brandCollection.findOne(phone)
+  res.send(result)
+})
+
+app.get('/phones', async(req, res)=>{
+  const cursor = brandCollection.find();
+  const result = await cursor.toArray()
+  res.send(result)
+})
+
+
+
+
+
+
+
+
+
+
 
 app.get('/cart', async(req, res)=>{
   const cursor = cartCollection.find();
@@ -55,13 +81,6 @@ app.get('/cart', async(req, res)=>{
 
 })
 
-
-app.get('/phones/:id', async(req, res)=>{
-  const id = req.params.id
-  const phone = {_id : new ObjectId(id)}
-  const result = await brandCollection.findOne(phone)
-  res.send(result)
-})
 
 
 
@@ -72,6 +91,9 @@ app.post('/phones', async(req, res)=>{
   const result = await brandCollection.insertOne(phone)
   res.send(result )
 })
+
+
+
 
 
 app.post('/cart', async(req, res)=>{
